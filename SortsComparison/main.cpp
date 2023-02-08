@@ -2,7 +2,15 @@
 
 int op_counter;
 
-pair<vector<int>, int> selectionSort(vector<int> &data) {
+template <typename T>
+void swap(T& a, T& b) {
+    T temp = a;
+    a = b;
+    b = temp;
+    op_counter += 3;
+}
+
+pair<vector<int>, int> selectionSort(vector<int> data) {
     op_counter = 0; // operations counter
     ++op_counter;
     for (int i = 0; i < data.size(); ++i) {
@@ -14,10 +22,8 @@ pair<vector<int>, int> selectionSort(vector<int> &data) {
         }
         op_counter += 2;
         if (i != min) {
-            int temp = data[i];
-            data[i] = data[min];
-            data[min] = temp;
-            op_counter += 7;
+            swap(data[i], data[min]);
+            op_counter += 4;
         }
     }
     return pair<vector<int>, int>(data, op_counter);
