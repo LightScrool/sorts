@@ -14,6 +14,8 @@ SORTS = {
 
 
 def helper3(func, argument, expected_result):
+    if argument == expected_result:
+        raise RuntimeError('Массив уже отсортирован!')
     start_time = timeit.default_timer()
     result = func(argument)
     time_of_execution = timeit.default_timer() - start_time
