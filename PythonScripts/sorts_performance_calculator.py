@@ -1,4 +1,4 @@
-import sorts_comparison
+import cpp_sorts_with_op_counter
 import json
 import timeit
 from itertools import chain
@@ -9,7 +9,7 @@ ARRAY_MAX_SIZE = 4100
 CHANGE_STEP = 50
 DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
 SORTS = {
-    'selection_sort': sorts_comparison.selection_sort
+    'selection_sort': cpp_sorts_with_op_counter.selection_sort
 }
 
 
