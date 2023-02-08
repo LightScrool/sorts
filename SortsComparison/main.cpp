@@ -7,7 +7,7 @@ void printList(const vector<int> &list) {
     std::cout << std::endl;
 }
 
-int selectionSort(vector<int> &data) {
+pair<vector<int>, int> selectionSort(vector<int> &data) {
     int oc = 0; // operations counter
     ++oc;
     for (int i = 0; i < data.size(); ++i) {
@@ -25,7 +25,7 @@ int selectionSort(vector<int> &data) {
             oc += 7;
         }
     }
-    return oc;
+    return pair<vector<int>, int>(data, oc);
 }
 
 PYBIND11_MODULE(sorts_comparison, module_handle) {

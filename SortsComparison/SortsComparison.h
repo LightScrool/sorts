@@ -6,5 +6,6 @@ namespace py = pybind11;
 
 #include <vector>
 using std::vector;
+using std::pair;
 
 #include <iostream>
