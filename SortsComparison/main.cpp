@@ -299,6 +299,64 @@ pair<vector<int>, int> mergeSort(vector<int> data) {
     return { data, op_counter };
 }
 
+int partition(vector<int>& arr, int start, int end)
+{
+    int pivot = arr[start];
+
+    int count = 0;
+    op_counter += 5; // get; =; =; +; =
+    for (int i = start + 1; i <= end; ++i) {
+        op_counter += 7; // for; <=; ++; if; get; <=
+        if (arr[i] <= pivot) {
+            ++count;
+            op_counter += 2;
+        }
+    }
+
+    int pivotIndex = start + count;
+    swap(arr[pivotIndex], arr[start]);
+
+    int i = start, j = end;
+    op_counter += 6; // +; =; get; get; =; =;
+    while (i < pivotIndex && j > pivotIndex) {
+        op_counter += 4; // while; <; >; &&
+        while (arr[i] <= pivot) {
+            op_counter += 5; // while; get; <=; ++
+            ++i;
+        }
+        while (arr[j] > pivot) {
+            op_counter += 5; // while; get; <=; --
+            --j;
+        }
+        op_counter += 4; // if; <; >; &&
+        if (i < pivotIndex && j > pivotIndex) {
+            op_counter += 2;
+            swap(arr[i++], arr[j--]);
+        }
+    }
+
+    return pivotIndex;
+}
+
+void quickSortInner(vector<int>& arr, int start, int end)
+{
+    op_counter += 2; // if; >=
+    if (start >= end) {
+        return;
+    }
+    op_counter += 3; // =; -; +
+    int p = partition(arr, start, end);
+    quickSortInner(arr, start, p - 1);
+    quickSortInner(arr, p + 1, end);
+}
+
+pair<vector<int>, int> quickSort(vector<int> data) {
+    op_counter = 0;
+    op_counter += 2; // get; -
+    quickSortInner(data, 0, data.size() - 1);
+    return { data, op_counter };
+}
+
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("selection_sort", &selectionSort);
     module_handle.def("bubble_sort", &bubbleSort);
@@ -309,4 +367,5 @@ PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("counting_sort", &countingSort);
     module_handle.def("radix256_sort", &radix256Sort);
     module_handle.def("merge_sort", &mergeSort);
+    module_handle.def("quick_sort", &quickSort);
 }

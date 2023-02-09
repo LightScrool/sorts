@@ -18,6 +18,7 @@ SORTS = {  # TODO: uncomment
     'counting_sort': cpp_sorts_with_op_counter.counting_sort,
     'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
     'merge_sort': cpp_sorts_with_op_counter.merge_sort,
+    'quick_sort': cpp_sorts_with_op_counter.quick_sort,
 }
 
 
@@ -28,7 +29,9 @@ def helper3(func, argument, expected_result):
     result = func(argument)
     time_of_execution = timeit.default_timer() - start_time
     if result[0] != expected_result:
-        raise RuntimeError('Массив отсортирован неверно!')
+        if type(result[0])== list:
+            raise RuntimeError('Массив отсортирован неверно!')
+        raise RuntimeError('Функция не вернула массив!')
     return result[1], time_of_execution
 
 
@@ -73,7 +76,7 @@ def calculate_sorts_performance():
 
 def custom_single_test():
     array = DATA['zero_to_4000']
-    func = SORTS['merge_sort']
+    func = SORTS['quick_sort']
     ttr = 100000
 
     expected_result = array.copy()
