@@ -26,7 +26,7 @@ pair<vector<int>, int> selectionSort(vector<int> data) {
             op_counter += 2; // get, get
         }
     }
-    return pair<vector<int>, int>(data, op_counter);
+    return { data, op_counter };
 }
 
 pair<vector<int>, int> bubbleSort(vector<int> data) {
@@ -42,7 +42,7 @@ pair<vector<int>, int> bubbleSort(vector<int> data) {
             }
         }
     }
-    return pair<vector<int>, int>(data, op_counter);
+    return { data, op_counter };
 }
 
 pair<vector<int>, int> bubbleSortBetterOne(vector<int> data) {
@@ -64,7 +64,7 @@ pair<vector<int>, int> bubbleSortBetterOne(vector<int> data) {
         ++i;
         op_counter += 2;
     }
-    return pair<vector<int>, int>(data, op_counter);
+    return { data, op_counter };
 }
 
 pair<vector<int>, int> bubbleSortBetterTwo(vector<int> data) {
@@ -85,7 +85,25 @@ pair<vector<int>, int> bubbleSortBetterTwo(vector<int> data) {
         first_sorted = new_first_sorted;
         ++op_counter;
     }
-    return pair<vector<int>, int>(data, op_counter);
+    return { data, op_counter };
+}
+
+pair<vector<int>, int> insertionSort(vector<int> data) {
+    op_counter = 0;
+    ++op_counter; // =
+    for (int i = 1; i < data.size(); ++i) {
+        op_counter += 9; // for; get; <; ++; get; =; -; =
+        int insert_value = data[i];
+        int j = i - 1;
+        while (j >= 0 && data[j] > insert_value) {
+            op_counter += 10; // while; >; &&; get; >; get; =; get; --
+            data[j + 1] = data[j];
+            --j;
+        }
+        data[j + 1] = insert_value;
+        op_counter += 2;
+    }
+    return { data, op_counter };
 }
 
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
@@ -93,4 +111,5 @@ PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("bubble_sort", &bubbleSort);
     module_handle.def("bubble_sort_better_one", &bubbleSortBetterOne);
     module_handle.def("bubble_sort_better_two", &bubbleSortBetterTwo);
+    module_handle.def("insertion_sort", &insertionSort);
 }

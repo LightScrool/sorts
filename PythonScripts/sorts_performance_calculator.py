@@ -13,6 +13,7 @@ SORTS = {
     'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
     'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
     'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
+    'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
 }
 
 
