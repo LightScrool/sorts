@@ -16,7 +16,7 @@ SORTS = {  # TODO: uncomment
     'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
     'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
     'counting_sort': cpp_sorts_with_op_counter.counting_sort,
-    #'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
+    'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
     'merge_sort': cpp_sorts_with_op_counter.merge_sort,
 }
 
