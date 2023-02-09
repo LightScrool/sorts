@@ -4,7 +4,7 @@ import timeit
 from itertools import chain
 from data_generator import generate_data
 
-TIMES_TO_RUN = 3  # TODO: increase
+TIMES_TO_RUN = 10  # TODO: increase
 ARRAY_MAX_SIZE = 4100
 CHANGE_STEP = 50
 DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
@@ -15,7 +15,8 @@ SORTS = {  # TODO: uncomment
     # 'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
     # 'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
     # 'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
-    'counting_sort': cpp_sorts_with_op_counter.counting_sort,
+    # 'counting_sort': cpp_sorts_with_op_counter.counting_sort,
+    'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
 }
 
 

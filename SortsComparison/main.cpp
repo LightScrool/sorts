@@ -184,6 +184,63 @@ pair<vector<int>, int> countingSort(vector<int> data) {
     return { result, op_counter };
 }
 
+int getDigit256(int num, int i) {
+    op_counter += 3;
+    return (num >> (i * 8)) % 256;
+}
+
+int getPower256(const vector<int>& data) {
+    op_counter += 2; // =; =
+    int num = getMax(data);
+    int count = 0;
+    while (num != 0) {
+        op_counter += 6; // while; !=; >>; =; ++
+        num >>= 8;
+        ++count;
+    }
+    return count;
+}
+
+pair<vector<int>, int> radix256Sort(vector<int> data) {
+    op_counter = 0;
+    int power = getPower256(data);
+    op_counter += 2; // =; =
+    for (int i = 0; i < power; ++i) {
+        op_counter += 4; // for; <; ++
+
+        vector<int> counts;
+        counts.resize(256, 0);
+        op_counter += 256 * 2 + 1; // выделение памяти; зануление; =
+
+        for (int j = 0; j < data.size(); ++j) {
+            op_counter += 10; // for; get; <; ++; get; =; get; ++
+            int digit = getDigit256(data[j], i);
+            ++counts[digit];
+        }
+
+        ++op_counter; // =
+        for (int j = 1; j < 256; ++j) {
+            op_counter += 10; // for; get; <; ++; get; =; get; ++
+            counts[j] += counts[j - 1];
+        }
+
+        vector<int> round_result;
+        round_result.resize(data.size());
+        op_counter += 256 + 5; // выделение памяти; get; =; get; -; =
+        for (int j = data.size() - 1; j >= 0; --j) {
+            op_counter += 13; // for; >=; --; get; =; get; --; get; get; get; =
+            int digit = getDigit256(data[j], i);
+            --counts[digit];
+            round_result[counts[digit]] = data[j];
+        }
+
+        data = round_result; 
+        op_counter += data.size(); // copy
+    }
+
+    return { data, op_counter };
+}
+
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("selection_sort", &selectionSort);
     module_handle.def("bubble_sort", &bubbleSort);
@@ -192,4 +249,5 @@ PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("insertion_sort", &insertionSort);
     module_handle.def("binary_insertion_sort", &binaryInsertionSort);
     module_handle.def("counting_sort", &countingSort);
+    module_handle.def("radix256_sort", &radix256Sort);
 }
