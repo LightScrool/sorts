@@ -4,11 +4,12 @@ import timeit
 from itertools import chain
 from data_generator import generate_data
 
-TIMES_TO_RUN = 3  # TODO: set to 100
+OUTPUT_FILE = 'sorts_performance_result.json'
+TIMES_TO_RUN = 100
 ARRAY_MAX_SIZE = 4100
 CHANGE_STEP = 50
 DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
-SORTS = {  # TODO: uncomment
+SORTS = {
     'selection_sort': cpp_sorts_with_op_counter.selection_sort,
     'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
     'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
@@ -77,21 +78,9 @@ def calculate_sorts_performance():
     return result
 
 
-def custom_single_test():
-    array = DATA['zero_to_4000']
-    func = SORTS['quick_sort']
-    ttr = 100000
-
-    expected_result = array.copy()
-    expected_result.sort()
-    results = [helper3(func, array, expected_result)[1] for _ in range(ttr)]
-    answer = sum(results) / ttr / 1e-9
-    print(answer)
-
-
 def main():
     sorts_performance = calculate_sorts_performance()
-    with open('sorts_performance_result.json', 'w') as outfile:
+    with open(OUTPUT_FILE, 'w') as outfile:
         json.dump(sorts_performance, outfile, indent=2)
 
 

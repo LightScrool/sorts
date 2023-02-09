@@ -2,8 +2,8 @@
 
 int op_counter;
 
-template <typename T>
-void swap(T& a, T& b) {
+template<typename T>
+void swap(T &a, T &b) {
     T temp = a;
     a = b;
     b = temp;
@@ -11,14 +11,13 @@ void swap(T& a, T& b) {
 }
 
 template<typename T>
-int binarySearch(T value, const vector<T>& data, int l, int r) {
+int binarySearch(T value, const vector<T> &data, int l, int r) {
     while (l < r - 1) {
         op_counter += 10; // while; -; <; +; /; =; if; get; <; =
         int m = (l + r) / 2;
         if (data[m] < value) {
             l = m;
-        }
-        else {
+        } else {
             r = m;
         }
     }
@@ -26,7 +25,7 @@ int binarySearch(T value, const vector<T>& data, int l, int r) {
 }
 
 template<typename T>
-int getMax(const vector<T>& data) {
+int getMax(const vector<T> &data) {
     op_counter += 2; // get, =
     T max = data[0];
     for (T element : data) {
@@ -55,7 +54,7 @@ pair<vector<int>, int> selectionSort(vector<int> data) {
             op_counter += 2; // get, get
         }
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 pair<vector<int>, int> bubbleSort(vector<int> data) {
@@ -71,7 +70,7 @@ pair<vector<int>, int> bubbleSort(vector<int> data) {
             }
         }
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 pair<vector<int>, int> bubbleSortBetterOne(vector<int> data) {
@@ -93,7 +92,7 @@ pair<vector<int>, int> bubbleSortBetterOne(vector<int> data) {
         ++i;
         op_counter += 2;
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 pair<vector<int>, int> bubbleSortBetterTwo(vector<int> data) {
@@ -114,7 +113,7 @@ pair<vector<int>, int> bubbleSortBetterTwo(vector<int> data) {
         first_sorted = new_first_sorted;
         ++op_counter;
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 pair<vector<int>, int> insertionSort(vector<int> data) {
@@ -132,7 +131,7 @@ pair<vector<int>, int> insertionSort(vector<int> data) {
         data[j + 1] = insert_value;
         op_counter += 2;
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 pair<vector<int>, int> binaryInsertionSort(vector<int> data) {
@@ -146,18 +145,17 @@ pair<vector<int>, int> binaryInsertionSort(vector<int> data) {
             swap(data[j], data[j + 1]);
         }
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 pair<vector<int>, int> countingSort(vector<int> data) {
     op_counter = 0;
-    
+
     int counts_size = getMax(data) + 1;
     op_counter += 2; // +; get
 
-    std::vector<int> counts;
-    counts.resize(counts_size, 0);
-    op_counter += 2 * counts_size; // выделение памяти; зануление
+    vector<int> counts(counts_size);
+    op_counter += 2 * counts_size; // vector
 
     for (int element : data) {
         ++counts[element];
@@ -170,9 +168,8 @@ pair<vector<int>, int> countingSort(vector<int> data) {
         counts[i] += counts[i - 1];
     }
 
-    std::vector<int> result;
-    result.resize(data.size());
-    op_counter += 1 + data.size(); // выделение памяти; get
+    vector<int> result(data.size());
+    op_counter += 2 * data.size() + 1; // vector; get
 
     op_counter += 3; // get; -; =
     for (int i = data.size() - 1; i >= 0; --i) {
@@ -181,7 +178,7 @@ pair<vector<int>, int> countingSort(vector<int> data) {
         result[counts[data[i]]] = data[i];
     }
 
-    return { result, op_counter };
+    return {result, op_counter};
 }
 
 int getDigit256(int num, int i) {
@@ -189,7 +186,7 @@ int getDigit256(int num, int i) {
     return (num >> (i * 8)) % 256;
 }
 
-int getPower256(const vector<int>& data) {
+int getPower256(const vector<int> &data) {
     op_counter += 2; // =; =
     int num = getMax(data);
     int count = 0;
@@ -208,9 +205,8 @@ pair<vector<int>, int> radix256Sort(vector<int> data) {
     for (int i = 0; i < power; ++i) {
         op_counter += 4; // for; <; ++
 
-        vector<int> counts;
-        counts.resize(256, 0);
-        op_counter += 256 * 2 + 1; // выделение памяти; зануление; =
+        vector<int> counts(256);
+        op_counter += 256 * 2 + 1; // vector; =
 
         for (int j = 0; j < data.size(); ++j) {
             op_counter += 10; // for; get; <; ++; get; =; get; ++
@@ -224,9 +220,8 @@ pair<vector<int>, int> radix256Sort(vector<int> data) {
             counts[j] += counts[j - 1];
         }
 
-        vector<int> round_result;
-        round_result.resize(data.size());
-        op_counter += 256 + 5; // выделение памяти; get; =; get; -; =
+        vector<int> round_result(data.size());
+        op_counter += 256 * 2 + 5; // vector; get; =; get; -; =
         for (int j = data.size() - 1; j >= 0; --j) {
             op_counter += 13; // for; >=; --; get; =; get; --; get; get; get; =
             int digit = getDigit256(data[j], i);
@@ -238,15 +233,14 @@ pair<vector<int>, int> radix256Sort(vector<int> data) {
         op_counter += data.size(); // copy
     }
 
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 void merge(vector<int>::iterator begin, vector<int>::iterator border, vector<int>::iterator end) {
     op_counter += 2; // -; =
     int size = end - begin;
-    vector<int> merged;
-    merged.resize(size);
-    op_counter += size; // выделение памяти
+    vector<int> merged(size);
+    op_counter += 2 * size; // vector
 
     op_counter += 3; // =; =; =
     auto left_cur = begin;
@@ -296,11 +290,10 @@ void mergeSortInner(vector<int>::iterator begin, vector<int>::iterator end) {
 pair<vector<int>, int> mergeSort(vector<int> data) {
     op_counter = 2; // get; get
     mergeSortInner(data.begin(), data.end());
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
-int partition(vector<int>& arr, int start, int end)
-{
+int partition(vector<int> &arr, int start, int end) {
     int pivot = arr[start];
 
     int count = 0;
@@ -338,8 +331,7 @@ int partition(vector<int>& arr, int start, int end)
     return pivotIndex;
 }
 
-void quickSortInner(vector<int>& arr, int start, int end)
-{
+void quickSortInner(vector<int> &arr, int start, int end) {
     op_counter += 2; // if; >=
     if (start >= end) {
         return;
@@ -354,7 +346,7 @@ pair<vector<int>, int> quickSort(vector<int> data) {
     op_counter = 0;
     op_counter += 2; // get; -
     quickSortInner(data, 0, data.size() - 1);
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 template<class ValueType>
@@ -471,14 +463,14 @@ pair<vector<int>, int> heapSort(vector<int> data) {
     op_counter = 0;
     Heap<int> heap(data);
     ++op_counter; // =
-    for (int& i : data) {
-        op_counter += 2; // 4foreach; =
+    for (int &i : data) {
+        op_counter += 6; // 4foreach; get; =
         i = heap.extract();
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
-void shellSortInner(vector<int>& data, int gap) {
+void shellSortInner(vector<int> &data, int gap) {
     ++op_counter; // =
     for (int i = gap; i < data.size(); ++i) {
         op_counter += 8; // for; get; <; ++; get; =; =
@@ -501,18 +493,18 @@ pair<vector<int>, int> shellSort(vector<int> data) {
         op_counter += 4; // for; >; /; =
         shellSortInner(data, gap);
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 pair<vector<int>, int> ciurSort(vector<int> data) {
     op_counter = 0;
-    vector<int> ciurSequence{ 1750, 701, 301, 132, 57, 23, 10, 4, 1 };
+    vector<int> ciurSequence{1750, 701, 301, 132, 57, 23, 10, 4, 1};
     op_counter += 18; // vector
     for (int gap : ciurSequence) {
         op_counter += 4; // 4foreach
         shellSortInner(data, gap);
     }
-    return { data, op_counter };
+    return {data, op_counter};
 }
 
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
