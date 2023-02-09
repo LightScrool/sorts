@@ -4,7 +4,7 @@ import timeit
 from itertools import chain
 from data_generator import generate_data
 
-TIMES_TO_RUN = 10  # TODO: increase
+TIMES_TO_RUN = 1000  # TODO: set to 100
 ARRAY_MAX_SIZE = 4100
 CHANGE_STEP = 50
 DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
@@ -68,6 +68,18 @@ def calculate_sorts_performance():
     for sort_name in SORTS.keys():
         result[sort_name] = helper1(sort_name)
     return result
+
+
+def custom_single_test():
+    array = DATA['zero_to_4000']
+    func = SORTS['radix256_sort']
+    ttr = 100000
+
+    expected_result = array.copy()
+    expected_result.sort()
+    results = [helper3(func, array, expected_result)[1] for _ in range(ttr)]
+    answer = sum(results) / ttr / 1e-9
+    print(answer)
 
 
 def main():

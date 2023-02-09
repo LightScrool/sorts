@@ -201,20 +201,22 @@ int getPower256(const vector<int>& data) {
     return count;
 }
 
-pair<vector<int>, int> radix256Sort(vector<int> data) {
+pair<vector<int>, int> radix256Sort(vector<int> source) {
     op_counter = 0;
-    int power = getPower256(data);
-    op_counter += 2; // =; =
+    int power = getPower256(source);
+    op_counter += 4; // =; =; &; =
+    auto data = &source;
     for (int i = 0; i < power; ++i) {
-        op_counter += 4; // for; <; ++
+        op_counter += 6; // for; <; ++ get; =
+        auto cur_data = *data;
 
         vector<int> counts;
         counts.resize(256, 0);
         op_counter += 256 * 2 + 1; // выделение памяти; зануление; =
 
-        for (int j = 0; j < data.size(); ++j) {
+        for (int j = 0; j < cur_data.size(); ++j) {
             op_counter += 10; // for; get; <; ++; get; =; get; ++
-            int digit = getDigit256(data[j], i);
+            int digit = getDigit256(cur_data[j], i);
             ++counts[digit];
         }
 
@@ -225,20 +227,20 @@ pair<vector<int>, int> radix256Sort(vector<int> data) {
         }
 
         vector<int> round_result;
-        round_result.resize(data.size());
+        round_result.resize(cur_data.size());
         op_counter += 256 + 5; // выделение памяти; get; =; get; -; =
-        for (int j = data.size() - 1; j >= 0; --j) {
+        for (int j = cur_data.size() - 1; j >= 0; --j) {
             op_counter += 13; // for; >=; --; get; =; get; --; get; get; get; =
-            int digit = getDigit256(data[j], i);
+            int digit = getDigit256(cur_data[j], i);
             --counts[digit];
-            round_result[counts[digit]] = data[j];
+            round_result[counts[digit]] = cur_data[j];
         }
 
-        data = round_result; 
-        op_counter += data.size(); // copy
+        data = &round_result; 
+        op_counter += 2; // &; =
     }
 
-    return { data, op_counter };
+    return { *data, op_counter };
 }
 
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
