@@ -4,7 +4,7 @@ import timeit
 from itertools import chain
 from data_generator import generate_data
 
-TIMES_TO_RUN = 10  # TODO: set to 100
+TIMES_TO_RUN = 3  # TODO: set to 100
 ARRAY_MAX_SIZE = 4100
 CHANGE_STEP = 50
 DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
@@ -20,6 +20,8 @@ SORTS = {  # TODO: uncomment
     'merge_sort': cpp_sorts_with_op_counter.merge_sort,
     'quick_sort': cpp_sorts_with_op_counter.quick_sort,
     'heap_sort': cpp_sorts_with_op_counter.heap_sort,
+    'shell_sort': cpp_sorts_with_op_counter.shell_sort,
+    'ciur_sort': cpp_sorts_with_op_counter.ciur_sort,
 }
 
 

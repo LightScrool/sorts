@@ -478,6 +478,43 @@ pair<vector<int>, int> heapSort(vector<int> data) {
     return { data, op_counter };
 }
 
+void shellSortInner(vector<int>& data, int gap) {
+    ++op_counter; // =
+    for (int i = gap; i < data.size(); ++i) {
+        op_counter += 8; // for; get; <; ++; get; =; =
+        int insert_value = data[i];
+        int j = i;
+        while (j >= gap && data[j - gap] > insert_value) {
+            op_counter += 11; // while; >=; &&; get; >; get; =; -; get; -; =
+            data[j] = data[j - gap];
+            j -= gap;
+        }
+        data[j] = insert_value;
+        op_counter += 2;
+    }
+}
+
+pair<vector<int>, int> shellSort(vector<int> data) {
+    op_counter = 0;
+    op_counter += 3; // get; /; =
+    for (int gap = data.size() / 2; gap > 0; gap /= 2) {
+        op_counter += 4; // for; >; /; =
+        shellSortInner(data, gap);
+    }
+    return { data, op_counter };
+}
+
+pair<vector<int>, int> ciurSort(vector<int> data) {
+    op_counter = 0;
+    vector<int> ciurSequence{ 1750, 701, 301, 132, 57, 23, 10, 4, 1 };
+    op_counter += 18; // vector
+    for (int gap : ciurSequence) {
+        op_counter += 4; // 4foreach
+        shellSortInner(data, gap);
+    }
+    return { data, op_counter };
+}
+
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("selection_sort", &selectionSort);
     module_handle.def("bubble_sort", &bubbleSort);
@@ -490,4 +527,6 @@ PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("merge_sort", &mergeSort);
     module_handle.def("quick_sort", &quickSort);
     module_handle.def("heap_sort", &heapSort);
+    module_handle.def("shell_sort", &shellSort);
+    module_handle.def("ciur_sort", &ciurSort);
 }
