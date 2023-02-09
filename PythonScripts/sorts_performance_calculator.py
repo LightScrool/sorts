@@ -19,6 +19,7 @@ SORTS = {  # TODO: uncomment
     'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
     'merge_sort': cpp_sorts_with_op_counter.merge_sort,
     'quick_sort': cpp_sorts_with_op_counter.quick_sort,
+    'heap_sort': cpp_sorts_with_op_counter.heap_sort,
 }
 
 

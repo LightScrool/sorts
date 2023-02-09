@@ -357,6 +357,127 @@ pair<vector<int>, int> quickSort(vector<int> data) {
     return { data, op_counter };
 }
 
+template<class ValueType>
+class Heap {
+private:
+    vector<ValueType> data_;
+
+    void swap(int index1, int index2) {
+        op_counter += 7;
+        ValueType temp = data_[index1];
+        data_[index1] = data_[index2];
+        data_[index2] = temp;
+    }
+
+    int getLeft(int parent) {
+        op_counter += 5;
+        int res = (parent << 1) + 1;
+        return res < size() ? res : -1;
+    }
+
+    int getRight(int parent) {
+        op_counter += 5;
+        int res = (parent << 1) + 2;
+        return res < size() ? res : -1;
+    }
+
+    int getMinChild(int parent) {
+        int left = getLeft(parent);
+        int right = getRight(parent);
+        op_counter += 4; // =; =; if; ==
+        if (left == -1) {
+            return right;
+        }
+        op_counter += 2; // if; ==
+        if (right == -1) {
+            return left;
+        }
+        op_counter += 4; // get; get; >; ?
+        return data_[left] > data_[right] ? right : left;
+    }
+
+    bool requiresBalance(int parent) {
+        int min_child = getMinChild(parent);
+        op_counter += 7; // =; if; ==; ||; >; get; get
+        if (min_child == -1 || data_[min_child] > data_[parent]) {
+            return false;
+        }
+        return true;
+    }
+
+    void heapify(int i) {
+        int left_child, right_child, min;
+        while (true) {
+            left_child = getLeft(i);
+            right_child = getRight(i);
+            min = i;
+            op_counter += 18; // while; =; =; =; 2x(if; !=; &&; get; get; <); if; ==
+            if (left_child != -1 && data_[left_child] < data_[min]) {
+                min = left_child;
+                ++op_counter;
+            }
+            if (right_child != -1 && data_[right_child] < data_[min]) {
+                min = right_child;
+                ++op_counter;
+            }
+            if (min == i) {
+                break;
+            }
+            swap(i, min);
+            i = min;
+            ++op_counter;
+        }
+    }
+
+public:
+    Heap() = default;
+
+    explicit Heap(vector<ValueType> source) : Heap() {
+        data_ = source;
+        op_counter += data_.size() + 3; // copy; =; get; /
+        for (int i = size() / 2; i >= 0; --i) {
+            op_counter += 4; // for; >=; --
+            heapify(i);
+        }
+    };
+
+    ~Heap() = default;
+
+    size_t size() const {
+        return data_.size();
+    };
+
+    ValueType extract() {
+        ValueType value_to_return = data_[0];
+
+        int last = data_.size() - 1;
+        swap(0, last);
+        data_.pop_back();
+
+        int i = 0;
+        op_counter += 7; // get; =; get; -; =; pop(1); =
+        while (requiresBalance(i)) {
+            op_counter += 3; // while; =; =
+            int max_child = getMinChild(i);
+            swap(max_child, i);
+            i = max_child;
+        }
+
+        return value_to_return;
+    };
+};
+
+pair<vector<int>, int> heapSort(vector<int> data) {
+    op_counter = 0;
+    Heap<int> heap(data);
+    ++op_counter; // =
+    for (int& i : data) {
+        op_counter += 2; // 4foreach; =
+        i = heap.extract();
+    }
+    return { data, op_counter };
+}
+
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("selection_sort", &selectionSort);
     module_handle.def("bubble_sort", &bubbleSort);
@@ -368,4 +489,5 @@ PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("radix256_sort", &radix256Sort);
     module_handle.def("merge_sort", &mergeSort);
     module_handle.def("quick_sort", &quickSort);
+    module_handle.def("heap_sort", &heapSort);
 }
