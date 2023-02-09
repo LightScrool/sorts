@@ -10,6 +10,21 @@ void swap(T& a, T& b) {
     op_counter += 7; // 3x =; 4x get
 }
 
+template<typename T>
+int binarySearch(T value, const vector<T>& data, int l, int r) {
+    while (l < r - 1) {
+        op_counter += 10; // while; -; <; +; /; =; if; get; <; =
+        int m = (l + r) / 2;
+        if (data[m] < value) {
+            l = m;
+        }
+        else {
+            r = m;
+        }
+    }
+    return r;
+}
+
 pair<vector<int>, int> selectionSort(vector<int> data) {
     op_counter = 0;
     ++op_counter; // i =
@@ -106,10 +121,25 @@ pair<vector<int>, int> insertionSort(vector<int> data) {
     return { data, op_counter };
 }
 
+pair<vector<int>, int> binaryInsertionSort(vector<int> data) {
+    op_counter = 0;
+    ++op_counter; // =
+    for (int i = 1; i < data.size(); ++i) {
+        op_counter += 9; // for; get; <; ++; get; =; -; =
+        int place_to_insert = binarySearch(data[i], data, -1, i);
+        for (int j = i - 1; j >= place_to_insert; --j) {
+            op_counter += 6; // for; >=; --; get; get
+            swap(data[j], data[j + 1]);
+        }
+    }
+    return { data, op_counter };
+}
+
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("selection_sort", &selectionSort);
     module_handle.def("bubble_sort", &bubbleSort);
     module_handle.def("bubble_sort_better_one", &bubbleSortBetterOne);
     module_handle.def("bubble_sort_better_two", &bubbleSortBetterTwo);
     module_handle.def("insertion_sort", &insertionSort);
+    module_handle.def("binary_insertion_sort", &binaryInsertionSort);
 }

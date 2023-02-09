@@ -14,6 +14,7 @@ SORTS = {
     'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
     'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
     'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
+    'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
 }
 
 
