@@ -8,13 +8,14 @@ TIMES_TO_RUN = 3  # TODO: increase
 ARRAY_MAX_SIZE = 4100
 CHANGE_STEP = 50
 DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
-SORTS = {
-    'selection_sort': cpp_sorts_with_op_counter.selection_sort,
-    'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
-    'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
-    'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
-    'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
-    'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
+SORTS = {  # TODO: uncomment
+    # 'selection_sort': cpp_sorts_with_op_counter.selection_sort,
+    # 'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
+    # 'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
+    # 'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
+    # 'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
+    # 'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
+    'counting_sort': cpp_sorts_with_op_counter.counting_sort,
 }
 
 

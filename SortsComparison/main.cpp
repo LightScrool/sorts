@@ -25,6 +25,20 @@ int binarySearch(T value, const vector<T>& data, int l, int r) {
     return r;
 }
 
+template<typename T>
+int getMax(const vector<T>& data) {
+    op_counter += 2; // get, =
+    T max = data[0];
+    for (T element : data) {
+        op_counter += 6; // 4foreach; if; >
+        if (element > max) {
+            max = element;
+            ++op_counter;
+        }
+    }
+    return max;
+}
+
 pair<vector<int>, int> selectionSort(vector<int> data) {
     op_counter = 0;
     ++op_counter; // i =
@@ -135,6 +149,41 @@ pair<vector<int>, int> binaryInsertionSort(vector<int> data) {
     return { data, op_counter };
 }
 
+pair<vector<int>, int> countingSort(vector<int> data) {
+    op_counter = 0;
+    
+    int counts_size = getMax(data) + 1;
+    op_counter += 2; // +; get
+
+    std::vector<int> counts;
+    counts.resize(counts_size, 0);
+    op_counter += 2 * counts_size; // выделение памяти; зануление
+
+    for (int element : data) {
+        ++counts[element];
+        op_counter += 7; // 4foreach; get; ++;
+    }
+
+    ++op_counter; // =
+    for (int i = 1; i < counts_size; ++i) {
+        op_counter += 9; // for; <; ++; -; get; get; +=
+        counts[i] += counts[i - 1];
+    }
+
+    std::vector<int> result;
+    result.resize(data.size());
+    op_counter += 1 + data.size(); // выделение памяти; get
+
+    op_counter += 3; // get; -; =
+    for (int i = data.size() - 1; i >= 0; --i) {
+        op_counter += 13; // for; >=; --; get; get; --; get; get; get; get; =
+        --counts[data[i]];
+        result[counts[data[i]]] = data[i];
+    }
+
+    return { result, op_counter };
+}
+
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("selection_sort", &selectionSort);
     module_handle.def("bubble_sort", &bubbleSort);
@@ -142,4 +191,5 @@ PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("bubble_sort_better_two", &bubbleSortBetterTwo);
     module_handle.def("insertion_sort", &insertionSort);
     module_handle.def("binary_insertion_sort", &binaryInsertionSort);
+    module_handle.def("counting_sort", &countingSort);
 }
