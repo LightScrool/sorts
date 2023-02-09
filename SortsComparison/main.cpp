@@ -243,6 +243,64 @@ pair<vector<int>, int> radix256Sort(vector<int> source) {
     return { *data, op_counter };
 }
 
+void merge(vector<int>::iterator begin, vector<int>::iterator border, vector<int>::iterator end) {
+    op_counter += 2; // -; =
+    int size = end - begin;
+    vector<int> merged;
+    merged.resize(size);
+    op_counter += size; // выделение памяти
+
+    op_counter += 3; // =; =; =
+    auto left_cur = begin;
+    auto right_cur = border;
+
+    int index = 0;
+    while (left_cur != border || right_cur != end) {
+        op_counter += 20; // while; !=; ||; !=; 2x(if; !=; &&; ==; ||; get; <=; get)
+        if (left_cur != border && (right_cur == end || *left_cur <= *right_cur)) {
+            op_counter += 7; // get; get; =; ++; ++
+            merged[index] = *left_cur;
+            ++left_cur;
+            ++index;
+        }
+        if (right_cur != end && (left_cur == border || *right_cur <= *left_cur)) {
+            op_counter += 7; // get; get; =; ++; ++
+            merged[index] = *right_cur;
+            ++right_cur;
+            ++index;
+        }
+    }
+
+    op_counter += 2; // =; =
+    auto current = begin;
+    for (int i = 0; i < size; ++i) {
+        op_counter += 9; // for; <; ++; get; =; get; ++
+        *current = merged[i];
+        ++current;
+    }
+}
+
+void mergeSortInner(vector<int>::iterator begin, vector<int>::iterator end) {
+    op_counter += 8; // +; ==; if; -; =; +; /; = 
+    if (begin + 1 == end) {
+        return;
+    }
+
+    int size = end - begin;
+    auto border = begin + size / 2;
+
+    mergeSortInner(begin, border);
+    mergeSortInner(border, end);
+
+    merge(begin, border, end);
+}
+
+pair<vector<int>, int> mergeSort(vector<int> data) {
+    op_counter = 2; // get; get
+    mergeSortInner(data.begin(), data.end());
+    return { data, op_counter };
+}
+
 PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("selection_sort", &selectionSort);
     module_handle.def("bubble_sort", &bubbleSort);
@@ -252,4 +310,5 @@ PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
     module_handle.def("binary_insertion_sort", &binaryInsertionSort);
     module_handle.def("counting_sort", &countingSort);
     module_handle.def("radix256_sort", &radix256Sort);
+    module_handle.def("merge_sort", &mergeSort);
 }

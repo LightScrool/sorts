@@ -4,19 +4,20 @@ import timeit
 from itertools import chain
 from data_generator import generate_data
 
-TIMES_TO_RUN = 1000  # TODO: set to 100
+TIMES_TO_RUN = 10  # TODO: set to 100
 ARRAY_MAX_SIZE = 4100
 CHANGE_STEP = 50
 DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
 SORTS = {  # TODO: uncomment
-    # 'selection_sort': cpp_sorts_with_op_counter.selection_sort,
-    # 'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
-    # 'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
-    # 'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
-    # 'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
-    # 'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
-    # 'counting_sort': cpp_sorts_with_op_counter.counting_sort,
-    'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
+    'selection_sort': cpp_sorts_with_op_counter.selection_sort,
+    'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
+    'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
+    'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
+    'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
+    'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
+    'counting_sort': cpp_sorts_with_op_counter.counting_sort,
+    #'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
+    'merge_sort': cpp_sorts_with_op_counter.merge_sort,
 }
 
 
@@ -72,7 +73,7 @@ def calculate_sorts_performance():
 
 def custom_single_test():
     array = DATA['zero_to_4000']
-    func = SORTS['radix256_sort']
+    func = SORTS['merge_sort']
     ttr = 100000
 
     expected_result = array.copy()
