@@ -27,3 +27,5 @@ ARRAYS_NAMES = {
     'almost_sorted': 'Почти отсортировный',
     'reversed_list': 'Обратно отсортировный',
 }
+X_AXIS_TITLE = "Размер входных данных"
+Y_AXIS_TITLE_TIME = "Время выполнения, нс"

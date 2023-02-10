@@ -8,7 +8,8 @@ from config import (
     REPORT_FILE as OUTPUT_FILE,
     SORTS_NAMES,
     ARR_SIZES,
-    ARRAYS_NAMES
+    ARRAYS_NAMES,
+    X_AXIS_TITLE, Y_AXIS_TITLE_TIME
 )
 
 
@@ -110,16 +111,38 @@ def write_data(data: dict, sheet: Worksheet, get_value: callable):
         margin += 4
 
 
+def build_sort_chart(sheet: Worksheet, data_sheet: Worksheet, data_start_column: int = 2, y_axis_title: str = None):
+    min_row = 3
+    max_row = 46
+
+    data = [
+        ChartValues(
+            Reference(worksheet=data_sheet, min_col=data_start_column + i, min_row=min_row, max_row=max_row),
+            data_sheet.cell(column=data_start_column + i, row=min_row - 1).value
+        ) for i in range(4)
+    ]
+    position = 'A1'
+    x_axis = Reference(worksheet=data_sheet, min_col=1, min_row=min_row, max_row=max_row)
+    title = data_sheet.cell(column=data_start_column, row=1).value
+
+    draw_line_chart(data, sheet, position, x_axis, title, X_AXIS_TITLE, y_axis_title)
+
+
 def main():
     data = read_data()
 
     wb = Workbook()
+
     wb.remove(wb.active)
-    wb.create_sheet('Графики', 1)
+    wb.create_sheet('Графики', 1)  # change indexes; move names to cfg
     wb.create_sheet('Измерения времени', 0)
     wb.create_sheet('Измерения эл оп', 2)
+
     write_data(data, wb['Измерения времени'], lambda x: int(x['time_ns']))
     write_data(data, wb['Измерения эл оп'], lambda x: int(x['operations']))
+
+    build_sort_chart(wb['Графики'], wb['Измерения времени'], 2, Y_AXIS_TITLE_TIME)
+
     wb.save(OUTPUT_FILE)
 
 
