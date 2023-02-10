@@ -1,14 +1,15 @@
 import cpp_sorts_with_op_counter
 import json
 import timeit
-from itertools import chain
 from data_generator import generate_data
+from config import (
+    TIMES_TO_RUN,
+    ARRAY_MAX_SIZE,
+    ALMOST_SORTED_SWAP_STEP,
+    ARR_SIZES,
+    CALCULATED_DATA_FILE as OUTPUT_FILE
+)
 
-OUTPUT_FILE = 'sorts_performance_result.json'
-TIMES_TO_RUN = 100
-ARRAY_MAX_SIZE = 4100
-CHANGE_STEP = 50
-DATA = generate_data(ARRAY_MAX_SIZE, CHANGE_STEP)
 SORTS = {
     'selection_sort': cpp_sorts_with_op_counter.selection_sort,
     'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
@@ -24,6 +25,7 @@ SORTS = {
     'shell_sort': cpp_sorts_with_op_counter.shell_sort,
     'ciur_sort': cpp_sorts_with_op_counter.ciur_sort,
 }
+data = None
 
 
 def helper3(func, argument, expected_result):
@@ -33,7 +35,7 @@ def helper3(func, argument, expected_result):
     result = func(argument)
     time_of_execution = timeit.default_timer() - start_time
     if result[0] != expected_result:
-        if type(result[0])== list:
+        if type(result[0]) == list:
             raise RuntimeError('Массив отсортирован неверно!')
         raise RuntimeError('Функция не вернула массив!')
     return result[1], time_of_execution
@@ -62,10 +64,10 @@ def helper2(func, array):
 def helper1(sort_name):
     func = SORTS[sort_name]
     result = dict()
-    for array_name in DATA.keys():
-        array = DATA[array_name]
+    for array_name in data.keys():
+        array = data[array_name]
         result[array_name] = dict()
-        for i in chain(range(50, 300, 50), range(300, 4100 + 1, 100)):
+        for i in ARR_SIZES:
             print(f'{sort_name} -> {array_name} -> {i}')
             result[array_name][i] = helper2(func, array[0:i])
     return result
@@ -85,4 +87,5 @@ def main():
 
 
 if __name__ == '__main__':
+    data = generate_data(ARRAY_MAX_SIZE, ALMOST_SORTED_SWAP_STEP)
     main()
