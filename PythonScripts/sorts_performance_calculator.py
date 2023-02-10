@@ -80,10 +80,14 @@ def calculate_sorts_performance():
     return result
 
 
+def save_data(data: dict):
+    with open(OUTPUT_FILE, 'w') as outfile:
+        json.dump(data, outfile, indent=2)
+
+
 def main():
     sorts_performance = calculate_sorts_performance()
-    with open(OUTPUT_FILE, 'w') as outfile:
-        json.dump(sorts_performance, outfile, indent=2)
+    save_data(sorts_performance)
 
 
 if __name__ == '__main__':
