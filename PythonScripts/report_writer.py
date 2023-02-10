@@ -143,6 +143,30 @@ def build_sort_chart(
     draw_line_chart(data, sheet, position, x_axis, title, X_AXIS_TITLE, y_axis_title)
 
 
+def build_arr_chart(
+        sheet: Worksheet,
+        column: int,
+        row: int,
+        data_sheet: Worksheet,
+        data_start_column: int,
+        y_axis_title: str
+):
+    min_row = 3
+    max_row = 46
+
+    data = [
+        ChartValues(
+            Reference(worksheet=data_sheet, min_col=data_start_column + i * 4, min_row=min_row, max_row=max_row),
+            data_sheet.cell(column=2 + i * 4, row=min_row - 2).value
+        ) for i in range(13)
+    ]
+    position = sheet.cell(column=column, row=row).coordinate
+    x_axis = Reference(worksheet=data_sheet, min_col=1, min_row=min_row, max_row=max_row)
+    title = data_sheet.cell(column=data_start_column, row=2).value
+
+    draw_line_chart(data, sheet, position, x_axis, title, X_AXIS_TITLE, y_axis_title)
+
+
 def build_sort_chart_column(
         sheet: Worksheet,
         column: int,
@@ -155,6 +179,18 @@ def build_sort_chart_column(
         build_sort_chart(sheet, column, row, data_sheet, data_start_column, y_axis_title)
 
 
+def build_arr_chart_column(
+        sheet: Worksheet,
+        column: int,
+        data_sheet: Worksheet,
+        y_axis_title: str
+):
+    for i in range(len(ARRAYS_NAMES)):
+        data_start_column = 2 + i
+        row = 1 + i * CHART_VERTICAL_MARGIN
+        build_arr_chart(sheet, column, row, data_sheet, data_start_column, y_axis_title)
+
+
 def build_sort_charts(wb: Workbook):
     build_sort_chart_column(
         wb[CHART_SORT_SHEET_NAME],
@@ -164,6 +200,21 @@ def build_sort_charts(wb: Workbook):
     )
     build_sort_chart_column(
         wb[CHART_SORT_SHEET_NAME],
+        1 + CHART_HORIZONTAL_MARGIN,
+        wb[CALC_OP_SHEET_NAME],
+        Y_AXIS_TITLE_OP
+    )
+
+
+def build_arr_charts(wb: Workbook):
+    build_arr_chart_column(
+        wb[CHART_ARR_SHEET_NAME],
+        1,
+        wb[CALC_TIME_SHEET_NAME],
+        Y_AXIS_TITLE_TIME
+    )
+    build_arr_chart_column(
+        wb[CHART_ARR_SHEET_NAME],
         1 + CHART_HORIZONTAL_MARGIN,
         wb[CALC_OP_SHEET_NAME],
         Y_AXIS_TITLE_OP
@@ -185,6 +236,7 @@ def main():
     write_data(data, wb[CALC_OP_SHEET_NAME], lambda x: int(x['operations']))
 
     build_sort_charts(wb)
+    build_arr_charts(wb)
 
     wb.save(OUTPUT_FILE)
 
