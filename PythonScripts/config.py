@@ -1,8 +1,8 @@
 from itertools import chain
 
 # Files names
-CALCULATED_DATA_FILE = 'sorts_performance_result.json'
-REPORT_FILE = 'report.xlsx'
+CALCULATED_DATA_FILE = 'results/sorts_performance.json'
+REPORT_FILE = 'results/report.xlsx'
 
 # Calculations settings
 TIMES_TO_RUN = 1000
