@@ -10,7 +10,7 @@ from config import (
     SORTS_NAMES, ARRAYS_NAMES,
     CALC_TIME_SHEET_NAME, CALC_OP_SHEET_NAME, CHART_SORT_SHEET_NAME, CHART_ARR_SHEET_NAME,
     X_AXIS_TITLE, Y_AXIS_TITLE_TIME,
-    CHART_HEIGHT, CHART_WIDTH, CHART_HORIZONTAL_MARGIN, CHART_VERTICAL_MARGIN
+    CHART_HEIGHT, CHART_WIDTH, CHART_HORIZONTAL_MARGIN, CHART_VERTICAL_MARGIN, Y_AXIS_TITLE_OP
 )
 
 
@@ -155,6 +155,21 @@ def build_sort_chart_column(
         build_sort_chart(sheet, column, row, data_sheet, data_start_column, y_axis_title)
 
 
+def build_sort_charts(wb: Workbook):
+    build_sort_chart_column(
+        wb[CHART_SORT_SHEET_NAME],
+        1,
+        wb[CALC_TIME_SHEET_NAME],
+        Y_AXIS_TITLE_TIME
+    )
+    build_sort_chart_column(
+        wb[CHART_SORT_SHEET_NAME],
+        1 + CHART_HORIZONTAL_MARGIN,
+        wb[CALC_OP_SHEET_NAME],
+        Y_AXIS_TITLE_OP
+    )
+
+
 def main():
     data = read_data()
 
@@ -169,7 +184,7 @@ def main():
     write_data(data, wb[CALC_TIME_SHEET_NAME], lambda x: int(x['time_ns']))
     write_data(data, wb[CALC_OP_SHEET_NAME], lambda x: int(x['operations']))
 
-    build_sort_chart_column(wb[CHART_SORT_SHEET_NAME], 1, wb[CALC_TIME_SHEET_NAME], Y_AXIS_TITLE_TIME)
+    build_sort_charts(wb)
 
     wb.save(OUTPUT_FILE)
 

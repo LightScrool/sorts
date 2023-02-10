@@ -29,6 +29,7 @@ ARRAYS_NAMES = {
 }
 X_AXIS_TITLE = "Размер входных данных"
 Y_AXIS_TITLE_TIME = "Время выполнения, нс"
+Y_AXIS_TITLE_OP = "Количество элементарных операций"
 CALC_TIME_SHEET_NAME = "Измерения времени"
 CALC_OP_SHEET_NAME = 'Измерения эл оп'
 CHART_SORT_SHEET_NAME = "Графики по сортировкам"
