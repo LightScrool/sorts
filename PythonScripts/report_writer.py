@@ -9,7 +9,11 @@ from config import (
     SORTS_NAMES,
     ARR_SIZES,
     ARRAYS_NAMES,
-    X_AXIS_TITLE, Y_AXIS_TITLE_TIME
+    X_AXIS_TITLE, Y_AXIS_TITLE_TIME,
+    CALC_TIME_SHEET_NAME,
+    CALC_OP_SHEET_NAME,
+    CHART_SORT_SHEET_NAME,
+    CHART_ARR_SHEET_NAME,
 )
 
 
@@ -134,14 +138,15 @@ def main():
     wb = Workbook()
 
     wb.remove(wb.active)
-    wb.create_sheet('Графики', 1)  # change indexes; move names to cfg
-    wb.create_sheet('Измерения времени', 0)
-    wb.create_sheet('Измерения эл оп', 2)
+    wb.create_sheet(CHART_SORT_SHEET_NAME, 0)
+    wb.create_sheet(CHART_ARR_SHEET_NAME, 1)
+    wb.create_sheet(CALC_TIME_SHEET_NAME, 2)
+    wb.create_sheet(CALC_OP_SHEET_NAME, 3)
 
-    write_data(data, wb['Измерения времени'], lambda x: int(x['time_ns']))
-    write_data(data, wb['Измерения эл оп'], lambda x: int(x['operations']))
+    write_data(data, wb[CALC_TIME_SHEET_NAME], lambda x: int(x['time_ns']))
+    write_data(data, wb[CALC_OP_SHEET_NAME], lambda x: int(x['operations']))
 
-    build_sort_chart(wb['Графики'], wb['Измерения времени'], 2, Y_AXIS_TITLE_TIME)
+    build_sort_chart(wb[CHART_SORT_SHEET_NAME], wb[CALC_TIME_SHEET_NAME], 2, Y_AXIS_TITLE_TIME)
 
     wb.save(OUTPUT_FILE)
 
