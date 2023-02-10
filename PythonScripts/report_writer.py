@@ -6,52 +6,12 @@ from openpyxl.worksheet.worksheet import Worksheet
 from config import (
     CALCULATED_DATA_FILE as INPUT_FILE,
     REPORT_FILE as OUTPUT_FILE,
-    SORTS_NAMES,
     ARR_SIZES,
-    ARRAYS_NAMES,
+    SORTS_NAMES, ARRAYS_NAMES,
+    CALC_TIME_SHEET_NAME, CALC_OP_SHEET_NAME, CHART_SORT_SHEET_NAME, CHART_ARR_SHEET_NAME,
     X_AXIS_TITLE, Y_AXIS_TITLE_TIME,
-    CALC_TIME_SHEET_NAME,
-    CALC_OP_SHEET_NAME,
-    CHART_SORT_SHEET_NAME,
-    CHART_ARR_SHEET_NAME,
+    CHART_HEIGHT, CHART_WIDTH, CHART_HORIZONTAL_MARGIN, CHART_VERTICAL_MARGIN
 )
-
-
-class ChartValues:
-    def __init__(self, ref: Reference, title: str = None):
-        self.ref = ref
-        self.title = title
-
-
-def draw_line_chart(
-        data: list[ChartValues],
-        sheet: Worksheet,
-        position,
-        x_axis: Reference = None,
-        title: str = None,
-        x_axis_title: str = None,
-        y_axis_title: str = None
-):
-    chart = LineChart()
-
-    if x_axis_title is not None:
-        chart.x_axis.title = x_axis_title
-
-    if title is not None:
-        chart.title = title
-
-    if y_axis_title is not None:
-        chart.y_axis.title = y_axis_title
-
-    if x_axis is not None:
-        chart.set_categories(x_axis)
-
-    for item in data:
-        chart.add_data(item.ref)
-        if item.title is not None:
-            chart.series[-1].title = SeriesLabel(v=item.title)
-
-    sheet.add_chart(chart, position)
 
 
 def read_data() -> dict:
@@ -115,7 +75,58 @@ def write_data(data: dict, sheet: Worksheet, get_value: callable):
         margin += 4
 
 
-def build_sort_chart(sheet: Worksheet, data_sheet: Worksheet, data_start_column: int = 2, y_axis_title: str = None):
+class ChartValues:
+    def __init__(self, ref: Reference, title: str = None):
+        self.ref = ref
+        self.title = title
+
+
+def draw_line_chart(
+        data: list[ChartValues],
+        sheet: Worksheet,
+        position,
+        x_axis: Reference = None,
+        title: str = None,
+        x_axis_title: str = None,
+        y_axis_title: str = None
+):
+    # Create
+    chart = LineChart()
+
+    # Fill with data
+    for item in data:
+        chart.add_data(item.ref)
+        if item.title is not None:
+            chart.series[-1].title = SeriesLabel(v=item.title)
+
+    if x_axis is not None:
+        chart.set_categories(x_axis)
+
+    # Appearance
+    if x_axis_title is not None:
+        chart.x_axis.title = x_axis_title
+
+    if title is not None:
+        chart.title = title
+
+    if y_axis_title is not None:
+        chart.y_axis.title = y_axis_title
+
+    chart.width = CHART_WIDTH
+    chart.height = CHART_HEIGHT
+
+    # Save
+    sheet.add_chart(chart, position)
+
+
+def build_sort_chart(
+        sheet: Worksheet,
+        column: int,
+        row: int,
+        data_sheet: Worksheet,
+        data_start_column: int,
+        y_axis_title: str
+):
     min_row = 3
     max_row = 46
 
@@ -125,11 +136,23 @@ def build_sort_chart(sheet: Worksheet, data_sheet: Worksheet, data_start_column:
             data_sheet.cell(column=data_start_column + i, row=min_row - 1).value
         ) for i in range(4)
     ]
-    position = 'A1'
+    position = sheet.cell(column=column, row=row).coordinate
     x_axis = Reference(worksheet=data_sheet, min_col=1, min_row=min_row, max_row=max_row)
     title = data_sheet.cell(column=data_start_column, row=1).value
 
     draw_line_chart(data, sheet, position, x_axis, title, X_AXIS_TITLE, y_axis_title)
+
+
+def build_sort_chart_column(
+        sheet: Worksheet,
+        column: int,
+        data_sheet: Worksheet,
+        y_axis_title: str
+):
+    for i in range(len(SORTS_NAMES)):
+        data_start_column = 2 + i * 4
+        row = 1 + i * CHART_VERTICAL_MARGIN
+        build_sort_chart(sheet, column, row, data_sheet, data_start_column, y_axis_title)
 
 
 def main():
@@ -146,7 +169,7 @@ def main():
     write_data(data, wb[CALC_TIME_SHEET_NAME], lambda x: int(x['time_ns']))
     write_data(data, wb[CALC_OP_SHEET_NAME], lambda x: int(x['operations']))
 
-    build_sort_chart(wb[CHART_SORT_SHEET_NAME], wb[CALC_TIME_SHEET_NAME], 2, Y_AXIS_TITLE_TIME)
+    build_sort_chart_column(wb[CHART_SORT_SHEET_NAME], 1, wb[CALC_TIME_SHEET_NAME], Y_AXIS_TITLE_TIME)
 
     wb.save(OUTPUT_FILE)
 

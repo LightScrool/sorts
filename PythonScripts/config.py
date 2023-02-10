@@ -33,3 +33,7 @@ CALC_TIME_SHEET_NAME = "Измерения времени"
 CALC_OP_SHEET_NAME = 'Измерения эл оп'
 CHART_SORT_SHEET_NAME = "Графики по сортировкам"
 CHART_ARR_SHEET_NAME = "Графики по данным"
+CHART_WIDTH = 15.5
+CHART_HEIGHT = 9
+CHART_HORIZONTAL_MARGIN = 10
+CHART_VERTICAL_MARGIN = 22
