@@ -2,6 +2,8 @@ import json
 from openpyxl import Workbook
 from openpyxl.chart import Reference, LineChart
 from openpyxl.chart.series import SeriesLabel
+from openpyxl.styles import Font, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
 from config import (
     CALCULATED_DATA_FILE as INPUT_FILE,
@@ -10,7 +12,8 @@ from config import (
     SORTS_NAMES, ARRAYS_NAMES,
     CALC_TIME_SHEET_NAME, CALC_OP_SHEET_NAME, CHART_SORT_SHEET_NAME, CHART_ARR_SHEET_NAME,
     X_AXIS_TITLE, Y_AXIS_TITLE_TIME,
-    CHART_HEIGHT, CHART_WIDTH, CHART_HORIZONTAL_MARGIN, CHART_VERTICAL_MARGIN, Y_AXIS_TITLE_OP
+    CHART_HEIGHT, CHART_WIDTH, CHART_HORIZONTAL_MARGIN, CHART_VERTICAL_MARGIN, Y_AXIS_TITLE_OP,
+    FONT_NAME, FONT_SIZE, FONT_COLOR
 )
 
 
@@ -221,19 +224,54 @@ def build_arr_charts(wb: Workbook):
     )
 
 
+def auto_column_width_wo1(sheet: Worksheet, column):
+    max_length = 8
+    column_name = get_column_letter(column[0].column)
+    for i in range(1, len(column)):
+        cell = column[i]
+        try:
+            if len(str(cell.value)) > max_length:
+                max_length = len(cell.value)
+        except:
+            pass
+    width = max_length * 1.1
+    sheet.column_dimensions[column_name].width = width
+
+
+def prettier(sheet: Worksheet):
+    font = Font(name=FONT_NAME, size=FONT_SIZE, color=FONT_COLOR)
+    bold_font = Font(name=FONT_NAME, size=FONT_SIZE, color=FONT_COLOR, bold=True)
+    alignment = Alignment(horizontal='center', vertical='center')
+    border = Border(left=Side(style='thin'), right=Side(style='thin'),
+                    top=Side(style='thin'), bottom=Side(style='thin'))
+
+    for row in sheet['A:BA']:
+        for cell in row:
+            cell.font = font
+            cell.alignment = alignment
+            cell.border = border
+        row[0].font = bold_font
+        row[1].font = bold_font
+
+    for column in sheet.columns:
+        auto_column_width_wo1(sheet, column)
+
+
 def main():
     data = read_data()
 
     wb = Workbook()
 
     wb.remove(wb.active)
-    wb.create_sheet(CHART_SORT_SHEET_NAME, 0)
-    wb.create_sheet(CHART_ARR_SHEET_NAME, 1)
-    wb.create_sheet(CALC_TIME_SHEET_NAME, 2)
-    wb.create_sheet(CALC_OP_SHEET_NAME, 3)
+    wb.create_sheet(CALC_TIME_SHEET_NAME, 0)
+    wb.create_sheet(CALC_OP_SHEET_NAME, 1)
+    wb.create_sheet(CHART_SORT_SHEET_NAME, 2)
+    wb.create_sheet(CHART_ARR_SHEET_NAME, 3)
 
     write_data(data, wb[CALC_TIME_SHEET_NAME], lambda x: int(x['time_ns']))
     write_data(data, wb[CALC_OP_SHEET_NAME], lambda x: int(x['operations']))
+    prettier(wb[CALC_TIME_SHEET_NAME])
+    prettier(wb[CALC_OP_SHEET_NAME])
 
     build_sort_charts(wb)
     build_arr_charts(wb)
