@@ -1,4 +1,4 @@
-﻿#include "SortsComparison.h"
+﻿#include "CppSorts.h"
 
 int op_counter;
 
@@ -507,18 +507,19 @@ pair<vector<int>, int> ciurSort(vector<int> data) {
     return {data, op_counter};
 }
 
-PYBIND11_MODULE(cpp_sorts_with_op_counter, module_handle) {
-    module_handle.def("selection_sort", &selectionSort);
-    module_handle.def("bubble_sort", &bubbleSort);
-    module_handle.def("bubble_sort_better_one", &bubbleSortBetterOne);
-    module_handle.def("bubble_sort_better_two", &bubbleSortBetterTwo);
-    module_handle.def("insertion_sort", &insertionSort);
-    module_handle.def("binary_insertion_sort", &binaryInsertionSort);
-    module_handle.def("counting_sort", &countingSort);
-    module_handle.def("radix256_sort", &radix256Sort);
-    module_handle.def("merge_sort", &mergeSort);
-    module_handle.def("quick_sort", &quickSort);
-    module_handle.def("heap_sort", &heapSort);
-    module_handle.def("shell_sort", &shellSort);
-    module_handle.def("ciur_sort", &ciurSort);
+PYBIND11_MODULE(cpp_sorts_with_op_counter, handle) {
+    handle.doc() = "Each one function of the module takes list of positive integers and returns a tuple with two elements: sorted list and quantity of element operations that were performed.";
+    handle.def("selection_sort", &selectionSort);
+    handle.def("bubble_sort", &bubbleSort);
+    handle.def("bubble_sort_better_one", &bubbleSortBetterOne);
+    handle.def("bubble_sort_better_two", &bubbleSortBetterTwo);
+    handle.def("insertion_sort", &insertionSort);
+    handle.def("binary_insertion_sort", &binaryInsertionSort);
+    handle.def("counting_sort", &countingSort);
+    handle.def("radix256_sort", &radix256Sort);
+    handle.def("merge_sort", &mergeSort);
+    handle.def("quick_sort", &quickSort);
+    handle.def("heap_sort", &heapSort);
+    handle.def("shell_sort", &shellSort);
+    handle.def("ciur_sort", &ciurSort);
 }

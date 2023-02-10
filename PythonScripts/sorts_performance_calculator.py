@@ -1,4 +1,4 @@
-import cpp_sorts_with_op_counter
+import cpp_modules.cpp_sorts_with_op_counter as sort_functions
 import json
 import timeit
 from data_generator import generate_data
@@ -11,19 +11,19 @@ from config import (
 )
 
 SORTS = {
-    'selection_sort': cpp_sorts_with_op_counter.selection_sort,
-    'bubble_sort': cpp_sorts_with_op_counter.bubble_sort,
-    'bubble_sort_better_one': cpp_sorts_with_op_counter.bubble_sort_better_one,
-    'bubble_sort_better_two': cpp_sorts_with_op_counter.bubble_sort_better_two,
-    'insertion_sort': cpp_sorts_with_op_counter.insertion_sort,
-    'binary_insertion_sort': cpp_sorts_with_op_counter.binary_insertion_sort,
-    'counting_sort': cpp_sorts_with_op_counter.counting_sort,
-    'radix256_sort': cpp_sorts_with_op_counter.radix256_sort,
-    'merge_sort': cpp_sorts_with_op_counter.merge_sort,
-    'quick_sort': cpp_sorts_with_op_counter.quick_sort,
-    'heap_sort': cpp_sorts_with_op_counter.heap_sort,
-    'shell_sort': cpp_sorts_with_op_counter.shell_sort,
-    'ciur_sort': cpp_sorts_with_op_counter.ciur_sort,
+    'selection_sort': sort_functions.selection_sort,
+    'bubble_sort': sort_functions.bubble_sort,
+    'bubble_sort_better_one': sort_functions.bubble_sort_better_one,
+    'bubble_sort_better_two': sort_functions.bubble_sort_better_two,
+    'insertion_sort': sort_functions.insertion_sort,
+    'binary_insertion_sort': sort_functions.binary_insertion_sort,
+    'counting_sort': sort_functions.counting_sort,
+    'radix256_sort': sort_functions.radix256_sort,
+    'merge_sort': sort_functions.merge_sort,
+    'quick_sort': sort_functions.quick_sort,
+    'heap_sort': sort_functions.heap_sort,
+    'shell_sort': sort_functions.shell_sort,
+    'ciur_sort': sort_functions.ciur_sort,
 }
 
 

@@ -5,7 +5,7 @@ CALCULATED_DATA_FILE = 'sorts_performance_result.json'
 REPORT_FILE = 'report.xlsx'
 
 # Calculations settings
-TIMES_TO_RUN = 100
+TIMES_TO_RUN = 1000
 ARRAY_MAX_SIZE = 4100
 ALMOST_SORTED_SWAP_STEP = 50
 ARR_SIZES = list(chain(range(50, 300, 50), range(300, ARRAY_MAX_SIZE + 1, 100)))
