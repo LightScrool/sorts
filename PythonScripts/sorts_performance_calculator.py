@@ -25,7 +25,6 @@ SORTS = {
     'shell_sort': cpp_sorts_with_op_counter.shell_sort,
     'ciur_sort': cpp_sorts_with_op_counter.ciur_sort,
 }
-data = None
 
 
 def helper3(func, argument, expected_result):
@@ -61,22 +60,23 @@ def helper2(func, array):
     }
 
 
-def helper1(sort_name):
+def helper1(sort_name, data):
     func = SORTS[sort_name]
     result = dict()
     for array_name in data.keys():
         array = data[array_name]
         result[array_name] = dict()
         for i in ARR_SIZES:
-            print(f'{sort_name} -> {array_name} -> {i}')
-            result[array_name][i] = helper2(func, array[0:i])
+            print(f'Performing "{sort_name}" on "{array_name}" data, size = {i}')
+            result[array_name][str(i)] = helper2(func, array[0:i])
     return result
 
 
 def calculate_sorts_performance():
+    data = generate_data(ARRAY_MAX_SIZE, ALMOST_SORTED_SWAP_STEP)
     result = dict()
     for sort_name in SORTS.keys():
-        result[sort_name] = helper1(sort_name)
+        result[sort_name] = helper1(sort_name, data)
     return result
 
 
@@ -87,5 +87,4 @@ def main():
 
 
 if __name__ == '__main__':
-    data = generate_data(ARRAY_MAX_SIZE, ALMOST_SORTED_SWAP_STEP)
     main()

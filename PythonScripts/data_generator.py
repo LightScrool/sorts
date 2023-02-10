@@ -1,7 +1,7 @@
 import random
 
 
-def generate_data(array_max_size, change_step):
+def generate_data(array_max_size: int, change_step: int) -> dict:
     zero_to_5 = [random.randint(0, 5) for _ in range(array_max_size)]
     zero_to_4000 = [random.randint(0, 4000) for _ in range(array_max_size)]
     reversed_list = [i for i in range(4100, 4100 - array_max_size, -1)]

@@ -1,5 +1,7 @@
 import json
+from collections.abc import Callable
 from openpyxl import Workbook
+from openpyxl.cell import Cell
 from openpyxl.chart import Reference, LineChart
 from openpyxl.chart.series import SeriesLabel
 from openpyxl.styles import Font, Alignment, Border, Side
@@ -23,7 +25,7 @@ def read_data() -> dict:
     return data
 
 
-def write_sizes(sheet: Worksheet, column=1):
+def write_sizes(sheet: Worksheet, column: int = 1):
     sheet.cell(row=1, column=column).value = "Размер"
     sheet.merge_cells(start_row=1, end_row=2, start_column=column, end_column=column)
     row = 3
@@ -39,14 +41,22 @@ def write_arr_names(sheet: Worksheet, start_column: int):
         i += 1
 
 
-def get_list_of_values(data: dict, get_value: callable) -> list:
+def get_time(x: dict) -> int:
+    return int(x['time_ns'])
+
+
+def get_operations(x: dict) -> int:
+    return int(x['operations'])
+
+
+def get_list_of_values(data: dict, get_value: Callable[[dict], int | float]) -> list:
     answer = []
-    for size in ARR_SIZES:
-        answer.append(get_value(data[str(size)]))
+    for arr_size in ARR_SIZES:
+        answer.append(get_value(data[str(arr_size)]))
     return answer
 
 
-def write_values(data: dict, get_value: callable, sheet: Worksheet, column: int):
+def write_values(data: dict, get_value: Callable[[dict], int | float], sheet: Worksheet, column: int):
     start_row = 3
     values = get_list_of_values(data, get_value)
     row = start_row
@@ -55,12 +65,13 @@ def write_values(data: dict, get_value: callable, sheet: Worksheet, column: int)
         row += 1
 
 
-def write_sort(data: dict, sort_name: str, sheet: Worksheet, get_value: callable, margin: int = 0):
+def write_sort(data: dict, sort_name: str, sheet: Worksheet, get_value: Callable[[dict], int | float], margin: int = 0):
     start_row = 1
     start_column = 1 + margin
 
     sheet.cell(row=1, column=start_column).value = sort_name
-    sheet.merge_cells(start_row=start_row, end_row=start_row, start_column=start_column, end_column=start_column + 3)
+    end_column = start_column + len(ARRAYS_NAMES) - 1
+    sheet.merge_cells(start_row=start_row, end_row=start_row, start_column=start_column, end_column=end_column)
 
     write_arr_names(sheet, start_column)
 
@@ -70,12 +81,12 @@ def write_sort(data: dict, sort_name: str, sheet: Worksheet, get_value: callable
         column += 1
 
 
-def write_data(data: dict, sheet: Worksheet, get_value: callable):
+def write_data(data: dict, sheet: Worksheet, get_value: Callable[[dict], int | float]):
     write_sizes(sheet)
     margin = 1
     for sort_id in data.keys():
         write_sort(data[sort_id], SORTS_NAMES[sort_id], sheet, get_value, margin)
-        margin += 4
+        margin += len(ARRAYS_NAMES)
 
 
 class ChartValues:
@@ -87,7 +98,7 @@ class ChartValues:
 def draw_line_chart(
         data: list[ChartValues],
         sheet: Worksheet,
-        position,
+        position: str,
         x_axis: Reference = None,
         title: str = None,
         x_axis_title: str = None,
@@ -131,13 +142,13 @@ def build_sort_chart(
         y_axis_title: str
 ):
     min_row = 3
-    max_row = 46
+    max_row = min_row + len(ARR_SIZES) - 1
 
     data = [
         ChartValues(
             Reference(worksheet=data_sheet, min_col=data_start_column + i, min_row=min_row, max_row=max_row),
             data_sheet.cell(column=data_start_column + i, row=min_row - 1).value
-        ) for i in range(4)
+        ) for i in range(len(ARRAYS_NAMES))
     ]
     position = sheet.cell(column=column, row=row).coordinate
     x_axis = Reference(worksheet=data_sheet, min_col=1, min_row=min_row, max_row=max_row)
@@ -155,13 +166,18 @@ def build_arr_chart(
         y_axis_title: str
 ):
     min_row = 3
-    max_row = 46
+    max_row = min_row + len(ARR_SIZES) - 1
 
     data = [
         ChartValues(
-            Reference(worksheet=data_sheet, min_col=data_start_column + i * 4, min_row=min_row, max_row=max_row),
-            data_sheet.cell(column=2 + i * 4, row=min_row - 2).value
-        ) for i in range(13)
+            Reference(
+                worksheet=data_sheet,
+                min_col=data_start_column + i * len(ARRAYS_NAMES),
+                min_row=min_row,
+                max_row=max_row
+            ),
+            data_sheet.cell(column=2 + i * len(ARRAYS_NAMES), row=min_row - 2).value
+        ) for i in range(len(SORTS_NAMES))
     ]
     position = sheet.cell(column=column, row=row).coordinate
     x_axis = Reference(worksheet=data_sheet, min_col=1, min_row=min_row, max_row=max_row)
@@ -177,7 +193,7 @@ def build_sort_chart_column(
         y_axis_title: str
 ):
     for i in range(len(SORTS_NAMES)):
-        data_start_column = 2 + i * 4
+        data_start_column = 2 + i * len(ARRAYS_NAMES)
         row = 1 + i * CHART_VERTICAL_MARGIN
         build_sort_chart(sheet, column, row, data_sheet, data_start_column, y_axis_title)
 
@@ -224,9 +240,9 @@ def build_arr_charts(wb: Workbook):
     )
 
 
-def auto_column_width_wo1(sheet: Worksheet, column):
+def auto_column_width_wo1row(sheet: Worksheet, column: tuple[Cell]):
     max_length = 8
-    column_name = get_column_letter(column[0].column)
+    column_letter = get_column_letter(column[0].column)
     for i in range(1, len(column)):
         cell = column[i]
         try:
@@ -235,7 +251,7 @@ def auto_column_width_wo1(sheet: Worksheet, column):
         except:
             pass
     width = max_length * 1.1
-    sheet.column_dimensions[column_name].width = width
+    sheet.column_dimensions[column_letter].width = width
 
 
 def prettier(sheet: Worksheet):
@@ -245,21 +261,19 @@ def prettier(sheet: Worksheet):
     border = Border(left=Side(style='thin'), right=Side(style='thin'),
                     top=Side(style='thin'), bottom=Side(style='thin'))
 
-    for row in sheet['A:BA']:
-        for cell in row:
+    for column in sheet.columns:
+        for cell in column:
             cell.font = font
             cell.alignment = alignment
             cell.border = border
-        row[0].font = bold_font
-        row[1].font = bold_font
+        column[0].font = bold_font
+        column[1].font = bold_font
 
     for column in sheet.columns:
-        auto_column_width_wo1(sheet, column)
+        auto_column_width_wo1row(sheet, column)
 
 
-def main():
-    data = read_data()
-
+def write_report(data: dict):
     wb = Workbook()
 
     wb.remove(wb.active)
@@ -268,8 +282,8 @@ def main():
     wb.create_sheet(CHART_SORT_SHEET_NAME, 2)
     wb.create_sheet(CHART_ARR_SHEET_NAME, 3)
 
-    write_data(data, wb[CALC_TIME_SHEET_NAME], lambda x: int(x['time_ns']))
-    write_data(data, wb[CALC_OP_SHEET_NAME], lambda x: int(x['operations']))
+    write_data(data, wb[CALC_TIME_SHEET_NAME], get_time)
+    write_data(data, wb[CALC_OP_SHEET_NAME], get_operations)
     prettier(wb[CALC_TIME_SHEET_NAME])
     prettier(wb[CALC_OP_SHEET_NAME])
 
@@ -277,6 +291,11 @@ def main():
     build_arr_charts(wb)
 
     wb.save(OUTPUT_FILE)
+
+
+def main():
+    data = read_data()
+    write_report(data)
 
 
 if __name__ == '__main__':
