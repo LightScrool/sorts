@@ -1,7 +1,15 @@
+import json
 from openpyxl import Workbook
 from openpyxl.chart import Reference, LineChart
 from openpyxl.chart.series import SeriesLabel
 from openpyxl.worksheet.worksheet import Worksheet
+from config import (
+    CALCULATED_DATA_FILE as INPUT_FILE,
+    REPORT_FILE as OUTPUT_FILE,
+    SORTS_NAMES,
+    ARR_SIZES,
+    ARRAYS_NAMES
+)
 
 
 class ChartValues:
@@ -41,31 +49,43 @@ def draw_line_chart(
     sheet.add_chart(chart, position)
 
 
-def main(sheet):
-    for i in [2, 3, 5, 7]:
-        sheet.cell(row=1, column=i).value = f'Title {i}'
-        for j in range(2, 12):
-            sheet.cell(row=j, column=i).value = 100 * i + j * j
-    sheet.cell(row=1, column=1).value = 'Index'
-    for j in range(2, 12):
-        sheet.cell(row=j, column=1).value = 10 * (j - 1)
+def read_data() -> dict:
+    with open(INPUT_FILE, 'r') as file:
+        data = json.load(file)
+    return data
 
-    min_row = 2
-    max_row = 11
-    x_axis = Reference(min_row=min_row, max_row=max_row, min_col=1, worksheet=sheet)
-    values = [
-        ChartValues(Reference(min_row=min_row, max_row=max_row, min_col=2, worksheet=sheet)),
-        ChartValues(Reference(min_row=min_row, max_row=max_row, min_col=3, worksheet=sheet), 'ds'),
-        ChartValues(Reference(min_row=min_row, max_row=max_row, min_col=5, worksheet=sheet), 'ds'),
-        ChartValues(Reference(min_row=min_row, max_row=max_row, min_col=7, worksheet=sheet), 'ds'),
-    ]
 
-    draw_line_chart(values, sheet, 'J2', x_axis)
-    draw_line_chart(values, sheet, 'J30', x_axis, title='Title', x_axis_title='x', y_axis_title='y')
+def get_list_of_values(data: dict, get_value: callable) -> list:
+    answer = []
+    for size in ARR_SIZES:
+        answer.append(get_value(data[str(size)]))
+    return answer
+
+
+def write_sort(data: dict, sort_name: str, sheet: Worksheet, get_value: callable):
+    sheet.append([sort_name])
+    for array in data.keys():
+        sheet.append([ARRAYS_NAMES[array], *get_list_of_values(data[array], get_value)])
+
+
+def write_data(data: dict, sheet: Worksheet, get_value: callable):
+    sheet.append(['Размер массива', *ARR_SIZES])
+    for sort_id in data.keys():
+        write_sort(data[sort_id], SORTS_NAMES[sort_id], sheet, get_value)
+
+
+def main():
+    data = read_data()
+
+    wb = Workbook()
+    wb.remove(wb.active)
+    wb.create_sheet('Графики', 0)
+    wb.create_sheet('Измерения времени', 1)
+    wb.create_sheet('Измерения эл оп', 2)
+    write_data(data, wb['Измерения времени'], lambda x: int(x['time_ns']))
+    write_data(data, wb['Измерения эл оп'], lambda x: int(x['operations']))
+    wb.save(OUTPUT_FILE)
 
 
 if __name__ == '__main__':
-    wb = Workbook()
-    ws = wb.active
-    main(ws)
-    wb.save('report.xlsx')
+    main()
