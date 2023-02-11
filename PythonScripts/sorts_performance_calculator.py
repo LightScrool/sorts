@@ -1,4 +1,5 @@
 import cpp_modules.cpp_sorts_with_op_counter as sort_functions
+import os
 import json
 import timeit
 from data_generator import generate_data
@@ -7,7 +8,7 @@ from config import (
     ARRAY_MAX_SIZE,
     ALMOST_SORTED_SWAP_STEP,
     ARR_SIZES,
-    CALCULATED_DATA_FILE as OUTPUT_FILE
+    CALCULATED_DATA_FILE, RESULTS_FOLDER
 )
 
 SORTS = {
@@ -81,7 +82,10 @@ def calculate_sorts_performance():
 
 
 def save_data(data: dict):
-    with open(OUTPUT_FILE, 'w') as outfile:
+    if not os.path.exists(RESULTS_FOLDER):
+        os.mkdir(RESULTS_FOLDER)
+    output_file = RESULTS_FOLDER + os.sep + CALCULATED_DATA_FILE
+    with open(output_file, 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 

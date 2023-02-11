@@ -1,4 +1,5 @@
 import json
+import os
 from collections.abc import Callable
 from openpyxl import Workbook
 from openpyxl.cell import Cell
@@ -8,19 +9,19 @@ from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
 from config import (
-    CALCULATED_DATA_FILE as INPUT_FILE,
-    REPORT_FILE as OUTPUT_FILE,
+    RESULTS_FOLDER as DATA_FOLDER, CALCULATED_DATA_FILE as INPUT_FILE_NAME, REPORT_FILE as OUTPUT_FILE_NAME,
     ARR_SIZES,
     SORTS_NAMES, ARRAYS_NAMES,
     CALC_TIME_SHEET_NAME, CALC_OP_SHEET_NAME, CHART_SORT_SHEET_NAME, CHART_ARR_SHEET_NAME,
     X_AXIS_TITLE, Y_AXIS_TITLE_TIME,
     CHART_HEIGHT, CHART_WIDTH, CHART_HORIZONTAL_MARGIN, CHART_VERTICAL_MARGIN, Y_AXIS_TITLE_OP,
-    FONT_NAME, FONT_SIZE, FONT_COLOR
+    FONT_NAME, FONT_SIZE, FONT_COLOR,
 )
 
 
 def read_data() -> dict:
-    with open(INPUT_FILE, 'r') as file:
+    input_file = DATA_FOLDER + os.sep + INPUT_FILE_NAME
+    with open(input_file, 'r') as file:
         data = json.load(file)
     return data
 
@@ -41,12 +42,12 @@ def write_arr_names(sheet: Worksheet, start_column: int):
         i += 1
 
 
-def get_time(x: dict) -> int:
-    return int(x['time_ns'])
+def get_time(x: dict) -> float:
+    return int(x['time_ns']) / 1e6
 
 
-def get_operations(x: dict) -> int:
-    return int(x['operations'])
+def get_operations(x: dict) -> float:
+    return int(x['operations']) / 1e6
 
 
 def get_list_of_values(data: dict, get_value: Callable[[dict], int | float]) -> list:
@@ -273,7 +274,7 @@ def prettier(sheet: Worksheet):
         auto_column_width_wo1row(sheet, column)
 
 
-def write_report(data: dict):
+def write_report(data: dict) -> Workbook:
     wb = Workbook()
 
     wb.remove(wb.active)
@@ -290,12 +291,20 @@ def write_report(data: dict):
     build_sort_charts(wb)
     build_arr_charts(wb)
 
-    wb.save(OUTPUT_FILE)
+    return wb
+
+
+def save_report(report: Workbook):
+    if not os.path.exists(DATA_FOLDER):
+        os.mkdir(DATA_FOLDER)
+    output_file = DATA_FOLDER + os.sep + OUTPUT_FILE_NAME
+    report.save(output_file)
 
 
 def main():
     data = read_data()
-    write_report(data)
+    report = write_report(data)
+    save_report(report)
 
 
 if __name__ == '__main__':

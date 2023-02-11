@@ -1,8 +1,9 @@
 from itertools import chain
 
 # Files names
-CALCULATED_DATA_FILE = 'results/sorts_performance.json'
-REPORT_FILE = 'results/report.xlsx'
+RESULTS_FOLDER = 'results'
+CALCULATED_DATA_FILE = 'sorts_performance.json'
+REPORT_FILE = 'report.xlsx'
 
 # Calculations settings
 TIMES_TO_RUN = 1000
@@ -33,10 +34,10 @@ ARRAYS_NAMES = {
     'reversed_list': 'Обратно отсортировный',
 }
 X_AXIS_TITLE = "Размер входных данных"
-Y_AXIS_TITLE_TIME = "Время выполнения, нс"
-Y_AXIS_TITLE_OP = "Количество элементарных операций"
-CALC_TIME_SHEET_NAME = "Измерения времени"
-CALC_OP_SHEET_NAME = 'Измерения эл оп'
+Y_AXIS_TITLE_TIME = "Время выполнения, мс"
+Y_AXIS_TITLE_OP = "Количество элементарных операций, млн"
+CALC_TIME_SHEET_NAME = "Измерения времени, мс"
+CALC_OP_SHEET_NAME = 'Измерения ЭО, млн'
 CHART_SORT_SHEET_NAME = "Графики по сортировкам"
 CHART_ARR_SHEET_NAME = "Графики по данным"
 
