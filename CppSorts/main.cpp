@@ -7,7 +7,7 @@ void swap(T &a, T &b) {
     T temp = a;
     a = b;
     b = temp;
-    op_counter += 7; // 3x =; 4x get
+    op_counter += 3; // 3x =
 }
 
 template<typename T>
@@ -155,7 +155,7 @@ pair<vector<int>, int> countingSort(vector<int> data) {
     op_counter += 2; // +; get
 
     vector<int> counts(counts_size);
-    op_counter += 2 * counts_size; // vector
+    op_counter += 5 * counts_size; // vector
 
     for (int element : data) {
         ++counts[element];
@@ -169,7 +169,7 @@ pair<vector<int>, int> countingSort(vector<int> data) {
     }
 
     vector<int> result(data.size());
-    op_counter += 2 * data.size() + 1; // vector; get
+    op_counter += 5 * data.size() + 1; // vector; get
 
     op_counter += 3; // get; -; =
     for (int i = data.size() - 1; i >= 0; --i) {
@@ -206,7 +206,7 @@ pair<vector<int>, int> radix256Sort(vector<int> data) {
         op_counter += 4; // for; <; ++
 
         vector<int> counts(256);
-        op_counter += 256 * 2 + 1; // vector; =
+        op_counter += 256 * 5 + 1; // vector; =
 
         for (int j = 0; j < data.size(); ++j) {
             op_counter += 10; // for; get; <; ++; get; =; get; ++
@@ -221,7 +221,7 @@ pair<vector<int>, int> radix256Sort(vector<int> data) {
         }
 
         vector<int> round_result(data.size());
-        op_counter += 256 * 2 + 5; // vector; get; =; get; -; =
+        op_counter += data.size() * 5 + 5; // vector; get; =; get; -; =
         for (int j = data.size() - 1; j >= 0; --j) {
             op_counter += 13; // for; >=; --; get; =; get; --; get; get; get; =
             int digit = getDigit256(data[j], i);
@@ -240,7 +240,7 @@ void merge(vector<int>::iterator begin, vector<int>::iterator border, vector<int
     op_counter += 2; // -; =
     int size = end - begin;
     vector<int> merged(size);
-    op_counter += 2 * size; // vector
+    op_counter += 5 * size; // vector
 
     op_counter += 3; // =; =; =
     auto left_cur = begin;
@@ -499,7 +499,7 @@ pair<vector<int>, int> shellSort(vector<int> data) {
 pair<vector<int>, int> ciurSort(vector<int> data) {
     op_counter = 0;
     vector<int> ciurSequence{1750, 701, 301, 132, 57, 23, 10, 4, 1};
-    op_counter += 18; // vector
+    op_counter += 9 * 5; // vector
     for (int gap : ciurSequence) {
         op_counter += 4; // 4foreach
         shellSortInner(data, gap);
