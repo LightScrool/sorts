@@ -7,6 +7,7 @@ REPORT_FILE = 'report.xlsx'
 
 # Calculations settings
 TIMES_TO_RUN = 1000
+MIN_RUNNING_TIME_SEC = 1
 ARRAY_MAX_SIZE = 4100
 ALMOST_SORTED_SWAP_STEP = 50
 ARR_SIZES = list(chain(range(50, 300, 50), range(300, ARRAY_MAX_SIZE + 1, 100)))

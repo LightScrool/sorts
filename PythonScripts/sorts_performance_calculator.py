@@ -1,4 +1,5 @@
 import cpp_modules.cpp_sorts_with_op_counter as sort_functions
+import time
 import os
 import json
 import timeit
@@ -8,7 +9,7 @@ from config import (
     ARRAY_MAX_SIZE,
     ALMOST_SORTED_SWAP_STEP,
     ARR_SIZES,
-    CALCULATED_DATA_FILE, RESULTS_FOLDER
+    CALCULATED_DATA_FILE, RESULTS_FOLDER, MIN_RUNNING_TIME_SEC
 )
 
 SORTS = {
@@ -47,10 +48,13 @@ def helper2(func, array):
 
     operations_quantity_data = list()
     time_of_execution_data = list()
-    for _ in range(TIMES_TO_RUN):
+    i = 0
+    min_end_time = time.time() + MIN_RUNNING_TIME_SEC
+    while i < TIMES_TO_RUN or time.time() < min_end_time:
         oq, toe = helper3(func, array, expected_result)
         operations_quantity_data.append(oq)
         time_of_execution_data.append(toe)
+        i += 1
 
     operations_quantity = sum(operations_quantity_data) / len(operations_quantity_data)
     time_of_execution = sum(time_of_execution_data) / len(time_of_execution_data) / 1e-9
