@@ -3,6 +3,7 @@ import time
 import os
 import json
 import timeit
+from statistics import median
 from data_generator import generate_data
 from config import (
     TIMES_TO_RUN,
@@ -56,8 +57,8 @@ def helper2(func, array):
         time_of_execution_data.append(toe)
         i += 1
 
-    operations_quantity = sum(operations_quantity_data) / len(operations_quantity_data)
-    time_of_execution = sum(time_of_execution_data) / len(time_of_execution_data) / 1e-9
+    operations_quantity = median(operations_quantity_data)
+    time_of_execution = median(time_of_execution_data) / 1e-9
 
     return {
         'operations': int(operations_quantity),
